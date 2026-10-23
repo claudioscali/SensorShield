@@ -1,0 +1,35 @@
+version: '3.8' # Nella nuova versione non serve
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sensorshield_db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=sensorshield
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d sensorshield"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: sensorshield_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app # Permette di modificare il codice senza ricostruire il container
+    environment:
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  postgres_data:
