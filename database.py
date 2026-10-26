@@ -1,9 +1,9 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Stringa di connessione a PostgreSQL (creeremo il DB con Docker)
-SQLALCHEMY_DATABASE_URL = "postgresql://admin:admin123@db:5432/sensorshield"
-
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/db")
 # motore che gestisce le connessioni al database
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
